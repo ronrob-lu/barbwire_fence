@@ -1,154 +1,96 @@
--- Barbwire Fence Mod
--- Simple 2-block high fence with neighbor detection
-
-local modname = "barbwire_fence"
-
--- Helper to check if a node is our fence
-local function is_fence(name)
-    return name and (name == "barbwire_fence:full" or name == "barbwire_fence:top_only" or name == "barbwire_fence:bottom_only")
-end
-
--- Get connected neighbors (returns table of directions)
-local function get_connected_neighbors(pos)
-    local neighbors = {}
-    local dirs = {
-        {x=1, y=0, z=0},
-        {x=-1, y=0, z=0},
-        {x=0, y=0, z=1},
-        {x=0, y=0, z=-1}
-    }
-    
-    for _, dir in ipairs(dirs) do
-        local check_pos = {x=pos.x+dir.x, y=pos.y, z=pos.z+dir.z}
-        local node = minetest.get_node(check_pos)
-        if is_fence(node.name) then
-            table.insert(neighbors, dir)
-        end
-    end
-    return neighbors
-end
-
--- Define the main fence node (2 blocks high)
 minetest.register_node("barbwire_fence:full", {
-    description = "Barbwire Fence",
+    description = "Barbwire Fence (2 blocks high)",
     drawtype = "nodebox",
     paramtype = "light",
     paramtype2 = "facedir",
     sunlight_propagates = true,
     walkable = true,
     pointable = true,
-    diggable = true,
     climbable = false,
+    damage_groups = {snappy = 2},
     
-    -- Use your existing textures
     tiles = {
+        "barbwire-32px-32px.png", -- Top texture (barbwire)
+        "chainlink-32px-32px.png", -- Bottom texture (chainlink)
+        "chainlink-32px-32px.png", -- Side texture (chainlink base)
         "chainlink-32px-32px.png",
-        "barbwire-32px-32px.png"
+        "chainlink-32px-32px.png",
+        "chainlink-32px-32px.png",
     },
     
-    use_tile_groups = false,
-    inventory_image = "chainlink-32px-32px.png",
-    wield_image = "chainlink-32px-32px.png",
-    
-    -- Nodebox for 2-block height (y from -0.5 to 1.5)
     node_box = {
         type = "fixed",
         fixed = {
-            -- Bottom part (chainlink): y=-0.5 to y=0.5
+            -- Chainlink bottom section (y=-0.5 to y=0.5)
             {-0.1, -0.5, -0.1, 0.1, 0.5, 0.1},
-            -- Top part (barbwire): y=0.5 to y=1.5
-            {-0.12, 0.5, -0.12, 0.12, 1.5, 0.12},
-        }
+            -- Barbwire top section (y=0.5 to y=1.5) 
+            {-0.1, 0.5, -0.1, 0.1, 1.5, 0.1},
+        },
     },
     
     collision_box = {
         type = "fixed",
         fixed = {
             {-0.1, -0.5, -0.1, 0.1, 1.5, 0.1},
-        }
+        },
     },
     
     selection_box = {
         type = "fixed",
-        fixed = {-0.15, -0.5, -0.15, 0.15, 1.5, 0.15},
+        fixed = {
+            {-0.1, -0.5, -0.1, 0.1, 1.5, 0.1},
+        },
     },
     
     sounds = {
-        footstep = {name = "metal_footstep", gain = 0.4},
-        place = {name = "metal_place", gain = 0.5},
-        dig = {name = "metal_dig", gain = 0.6},
+        footstep = {name = "metal_footstep", gain = 0.3},
+        dig = {name = "metal_dig", gain = 0.4},
+        place = {name = "metal_place", gain = 0.3},
+        dug = {name = "metal_break", gain = 0.4},
     },
     
-    groups = {fence = 1, snappy = 2, not_in_creative_inventory = 0},
-    
     on_place = function(itemstack, placer, pointed_thing)
-        if not pointed_thing or not pointed_thing.under then
+        if not pointed_thing or not pointed_thing.above then
             return itemstack
         end
         
-        local pos = pointed_thing.under
-        local node_under = minetest.get_node(pos)
+        local pos = pointed_thing.above
+        local node = minetest.get_node(pos)
         local node_above = minetest.get_node({x=pos.x, y=pos.y+1, z=pos.z})
         
-        -- Check if space is clear for 2-block placement
-        if node_under.name ~= "air" or node_above.name ~= "air" then
+        -- Check if both positions are air
+        if node.name ~= "air" and node.name ~= "default:air" and node.name ~= "" then
+            return itemstack
+        end
+        if node_above.name ~= "air" and node_above.name ~= "default:air" and node_above.name ~= "" then
             return itemstack
         end
         
-        -- Place the full fence
-        minetest.set_node(pos, {name = "barbwire_fence:full"})
+        -- Place the fence
+        local placer_dir = math.floor((placer:get_look_horizontal() / (math.pi * 2)) + 0.5) % 4
+        local facedir = 0
+        if placer_dir == 0 then facedir = 2
+        elseif placer_dir == 1 then facedir = 1
+        elseif placer_dir == 2 then facedir = 0
+        elseif placer_dir == 3 then facedir = 3
+        end
         
-        -- Update neighbor connections (visual only for now)
-        local neighbors = get_connected_neighbors(pos)
-        -- Could add mesh adjustment here based on neighbors
+        minetest.set_node(pos, {name = "barbwire_fence:full", param2 = facedir})
         
-        if placer and placer:is_player() then
-            itemstack:take_item(1)
+        if not minetest.is_creative_enabled(placer:get_player_name()) then
+            itemstack:take_item()
         end
         
         return itemstack
     end,
-    
-    after_dig_node = function(pos, oldnode, oldmetadata, digger)
-        -- Clean up any connected visual logic if needed
-    end,
-})
-
--- Creative inventory item
-minetest.register_node("barbwire_fence:full_creative", {
-    description = "Barbwire Fence",
-    drawtype = "nodebox",
-    paramtype = "light",
-    paramtype2 = "facedir",
-    sunlight_propagates = true,
-    walkable = true,
-    tiles = {"chainlink-32px-32px.png"},
-    node_box = {
-        type = "fixed",
-        fixed = {
-            {-0.1, -0.5, -0.1, 0.1, 0.5, 0.1},
-            {-0.12, 0.5, -0.12, 0.12, 1.5, 0.12},
-        }
-    },
-    collision_box = {
-        type = "fixed",
-        fixed = {{-0.1, -0.5, -0.1, 0.1, 1.5, 0.1}},
-    },
-    selection_box = {
-        type = "fixed",
-        fixed = {-0.15, -0.5, -0.15, 0.15, 1.5, 0.15},
-    },
-    groups = {fence = 1, snappy = 2, creative_inventory = 1},
 })
 
 -- Crafting recipe
 minetest.register_craft({
-    output = "barbwire_fence:full 4",
+    output = "barbwire_fence:full",
     recipe = {
         {"default:steel_ingot", "default:stick", "default:steel_ingot"},
         {"default:stick", "default:steel_ingot", "default:stick"},
         {"default:steel_ingot", "default:stick", "default:steel_ingot"},
-    }
+    },
 })
-
-print("[MOD] Barbwire Fence loaded successfully!")
