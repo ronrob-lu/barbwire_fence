@@ -10,30 +10,23 @@ minetest.register_node("barbwire_fence:fence", {
     paramtype = "light",
     paramtype2 = "facedir",
     sunlight_propagates = true,
-    walkable = false,
+    walkable = true,
     pointable = true,
     diggable = true,
     buildable_to = false,
     floodable = true,
     
-    -- Collision box - makes it solid for players/mobs but allows projectiles through gaps
+    -- Collision box - makes it solid for players/mobs
     collision_box = {
         type = "fixed",
         fixed = {
-            -- Bottom post
-            {-0.05, -0.5, -0.05, 0.05, 1.5, 0.05},
-            -- Top post  
-            {-0.05, 0.5, -0.05, 0.05, 2.5, 0.05},
-            -- Chain link bottom section (lower half of block 1)
-            {-0.04, -0.5, -0.02, 0.04, 0.5, 0.02},
-            {-0.04, -0.5, 0.02, 0.04, 0.5, 0.06},
-            -- Chain link top section (upper half of block 1 + lower half of block 2)
-            {-0.04, 0.5, -0.02, 0.04, 1.5, 0.02},
-            {-0.04, 0.5, 0.02, 0.04, 1.5, 0.06},
-            -- Barbwire strands at top
-            {-0.1, 1.8, -0.03, 0.1, 1.85, 0.03},
-            {-0.1, 2.0, -0.03, 0.1, 2.05, 0.03},
-            {-0.1, 2.2, -0.03, 0.1, 2.25, 0.03},
+            -- Full height collision (2 blocks)
+            {-0.05, -0.5, -0.05, 0.05, 2.5, 0.05},
+            -- Chain link mesh collision
+            {-0.03, -0.5, -0.02, 0.03, 1.5, 0.02},
+            {-0.03, -0.5, 0.02, 0.03, 1.5, 0.06},
+            -- Barbwire at top
+            {-0.08, 1.9, -0.02, 0.08, 2.3, 0.02},
         }
     },
     
@@ -75,22 +68,17 @@ minetest.register_node("barbwire_fence:fence", {
     },
     
     tiles = {
-        {
-            name = "barbwire_fence_chainlink.png",
-            animation = {
-                type = "vertical_frames",
-                aspect_w = 16,
-                aspect_h = 16,
-                length = 0.0,
-            },
-        },
-        "barbwire_fence_barbwire.png",
         "barbwire_fence_chainlink_barbwire.png",
+        "barbwire_fence_chainlink_barbwire.png",
+        "barbwire_fence_chainlink.png",
+        "barbwire_fence_barbwire.png",
+        "barbwire_fence_chainlink.png",
+        "barbwire_fence_chainlink.png",
     },
     
     -- Use special material type for see-through behavior
-    use_tile_alpha = true,
     alpha = "blend",
+    use_tile_alpha = true,
     wield_image = "barbwire_fence_wield.png",
     
     groups = {
@@ -138,8 +126,8 @@ minetest.register_craftitem("barbwire_fence:fence_item", {
         local pos = pointed_thing.above
         local node = minetest.get_node(pos)
         
-        -- Check if we can place here
-        if not minetest.is_air(node.name) then
+        -- Check if we can place here (check if node is air)
+        if node.name ~= "air" then
             return itemstack
         end
         
