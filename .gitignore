@@ -1,1 +1,7 @@
-Nothing should be ignored in this case, as the changes consist only of source/config files (.lua) and texture/image files (.png), which should be tracked in version control.
+```
+# Minetest mod development
+.modpack/
+[!s]creenshots/
+worlds/
+mods/.git/
+```
