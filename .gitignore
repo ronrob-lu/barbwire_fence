@@ -1,7 +1,23 @@
 ```
-# Minetest mod development
-.modpack/
-[!s]creenshots/
-worlds/
-mods/.git/
+# Compiled and build artifacts
+*.pyc
+__pycache__/
+
+# Dependencies
+.env
+.env.local
+*.env.*
+
+# Logs and temp files
+*.log
+*.tmp
+*.swp
+
+# Editors
+.vscode/
+.idea/
+
+# System files
+.DS_Store
+Thumbs.db
 ```
