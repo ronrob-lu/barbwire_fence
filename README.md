@@ -1,67 +1,77 @@
 # Barbwire Fence Mod for Luanti/Minetest
 
-A 2-block high barbwire fence mod with chain-link and barbwire elements.
+> [!IMPORTANT]
+> ⚠️ **Development Note:** This mod is now part of the larger **[Enclave Mod](https://github.com/ronrob-lu/enclave)** project and is no longer developed as a standalone mod.
+> 
+> **Original Author:** [ronrob-lu](https://github.com/ronrob-lu) (2026)
 
-## Required Graphics
+This mod adds realistic, 2-block high defensive fences to Luanti/Minetest. It includes chain-link elements, barbwire strands, and combined security fences to secure your bases and borders.
 
-You need to create **only 3 texture files** (plus 1 optional wield image):
-
-### Required Textures (16x16 pixels each):
-
-1. **`barbwire_fence_chainlink.png`** (16x16)
-   - Chain-link fence pattern
-   - Should show the diamond mesh pattern typical of chain-link fences
-   - Use gray/silver colors with some transparency for the holes
-
-2. **`barbwire_fence_barbwire.png`** (16x16)
-   - Barbwire strand texture
-   - Show twisted wire with barbs/spikes
-   - Dark gray or metallic color
-   - Can be a horizontal strand with visible barbs
-
-3. **`barbwire_fence_chainlink_barbwire.png`** (16x16)
-   - Combined texture showing both chain-link AND barbwire together
-   - Chain-link on bottom half, barbwire strands on top
-   - This is used for the transition area
-
-### Optional (but recommended):
-
-4. **`barbwire_fence_wield.png`** (16x16 or 32x32)
-   - Inventory/wield image
-   - Can be a small preview of the fence
-   - If not provided, the game will use a default representation
-
-## Texture Specifications
-
-- **Format**: PNG with alpha channel (transparency)
-- **Size**: 16x16 pixels (standard Minetest/Luanti texture size)
-- **Color Palette**: Grays, silvers, metallic tones
-- **Style**: Pixel art consistent with default game textures
+---
 
 ## Features
 
-- **2-blocks high on placement** - No need to stack multiple nodes
-- **See-through design** - Like steelgrid, allows visibility and projectiles through gaps
-- **Collision detection** - Players and mobs cannot walk through, but arrows/arrows can pass
-- **Rotatable** - Faces the direction you're looking when placed
-- **Craftable** - Uses steel ingots and sticks
+- **2-Blocks High**: All fences stand 2 blocks tall upon placement, meaning you only need to place one node to create a secure perimeter.
+- **See-Through Design**: Allows visibility, light, and projectiles (such as arrows) to pass through while keeping mobs and players out.
+- **Collision Physics**: Fully prevents players and mobs from walking through the fence.
+- **Facedir Rotatable**: Fences automatically face the direction you are looking when placed, and support rotation using the Screwdriver tool.
+- **Craftable**: Made using standard survival items (Steel Ingots and Sticks).
+
+---
+
+## Blocks & Items
+
+| Block Name | Description | Command to Give |
+| :--- | :--- | :--- |
+| **Chainlink Fence**<br>`barbwire_fence:chainlink` | A clean, metal diamond-mesh fence. | `/giveme barbwire_fence:chainlink` |
+| **Barbwire Strand**<br>`barbwire_fence:barbwire` | A set of three horizontal barbwire strands with sharp spikes on top. | `/giveme barbwire_fence:barbwire` |
+| **Chainlink Fence with Barbwire**<br>`barbwire_fence:chainlink_barbwire` | A heavy-duty security fence combining a chainlink base with barbwire strands on top. | `/giveme barbwire_fence:chainlink_barbwire` |
+
+---
+
+## Crafting Recipes
+
+All recipes produce **4** fence blocks.
+
+### 1. Chainlink Fence
+```
+[Steel Ingot] [Steel Ingot] [Steel Ingot]
+[Steel Ingot] [           ] [Steel Ingot]
+[Steel Ingot] [           ] [Steel Ingot]
+```
+
+### 2. Barbwire Strand
+```
+[Steel Ingot] [  Stick  ] [Steel Ingot]
+[Steel Ingot] [  Stick  ] [Steel Ingot]
+[           ] [         ] [           ]
+```
+
+### 3. Chainlink Fence with Barbwire
+```
+[Steel Ingot] [  Stick  ] [Steel Ingot]
+[Steel Ingot] [Steel Ingot] [Steel Ingot]
+[Steel Ingot] [         ] [Steel Ingot]
+```
+
+---
 
 ## Installation
 
-1. Create the texture files listed above in the `textures/` folder
-2. Ensure `mod.conf` is present (already included)
-3. Enable the mod in your world's `world.mt` or mod configuration
+1. Copy this folder into your Luanti/Minetest `mods` directory (rename the folder to `barbwire_fence`).
+2. Enable the mod in your world configuration or menu.
+3. Start or reload your world.
 
-## Crafting Recipe
+---
 
-```
-Steel Ingot | Steel Ingot | Steel Ingot
-Steel Ingot | Stick       | Steel Ingot  
-Steel Ingot | Stick       | Steel Ingot
-```
+## Requirements
 
-Produces 4 barbwire fence items.
+- **Luanti** (formerly Minetest) 5.0.0 or newer.
 
-## License
+---
 
-[Your license here]
+## License & Credits
+
+- **Code**: MIT License (Copyright (c) 2026 ronrob-lu) - see [LICENSE.md](LICENSE.md)
+- **Graphics/Textures**: CC0 1.0 Universal (Public Domain) - see [LICENSE.md](LICENSE.md)
+- **Design & Assets**: Created by [ronrob-lu](https://github.com/ronrob-lu).
